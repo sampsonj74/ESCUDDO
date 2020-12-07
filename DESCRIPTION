@@ -18,4 +18,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Imports: tidyverse
+Imports: tidyverse, knitr
