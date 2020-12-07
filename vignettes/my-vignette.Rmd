@@ -1,0 +1,133 @@
+---
+title: "ESCUDDO"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ESCUDDO)
+```
+
+## Getting Started
+
+We first run a simulation to obtain the parameters (e.g. expected infection rates, infection patterns) for ESCUDDO. Some parameters are output by the function; many other parameters used for simulating trials will be saved in ofile. Since this is only run once, we suggest setting the size of the simulation-population to be npop = 5000000. 
+
+```{r, include=TRUE, echo=TRUE, cache=TRUE}
+myRes <- calcParam(hI1     = rep(0,9), 
+                   hI2     = rep(0,9), 
+                   npop    = 500000, 
+                   ofile   = "/volumes/data/Projects/HPV/out/Rparams.Rdat")
+```
+
+
+## Simulating a Trial
+
+We will simulate each trial arm separately. The information collected for a trial contains three matrices and a vector. All missing values should be set to -9; otherwise all values are 0 or 1.
+
+1. dMat16: A matrix showing HPV 16 infection at each visit (i.e. number of rows = number of subjects, number of columns = 9 for a four year study or 11 for a five year study; 0/1 indicate no/yes infection). 
+2. dMat18: A matrix showing HPV 18 infection at each visit (i.e. number of rows = number of subjects, number of columns = 9 for a four year study or 11 for a five year study; 0/1 indicate no/yes infection). 
+3. sMat: A matrix showing sexual debut before each visit (i.e. number of rows = number of subjects, number of columns = 9 for a four year study or 11 for a five year study; 0/1 indicate if sexual activity occurred prior to visit). 
+4. ATPx: A vector showing whether each individual qualifies for the ATP cohort (i.e. number of rows = number of subjects)
+
+Note, this simulation use the ofile generated in the above step. 
+
+```{r, include=TRUE, echo=TRUE}
+trial2dose <- simTrialArm(ofile="/volumes/data/Projects/HPV/out/Rparams.Rdat",yr=5,nsub=5000,pdis=0.005,pdo6=0.05,pdo=0.02,pmv=0.17)
+trial1dose <- simTrialArm(ofile="/volumes/data/Projects/HPV/out/Rparams.Rdat",yr=5,nsub=5000,pdis=0.01,pdo6=0.05,pdo=0.02,pmv=0.17)
+```
+
+## Getting Trial Results
+
+The main trial results include the number of observed events and the expected number of events had there been no missing visits. Recall an individual has an HPV16 (HPV18) event if (i) she doesn't have HPV16 (HPV18) at the 0- or 6- month visits (ii) she has two consecutive visits with HPV16 (HPV18) during follow-up (note: for counting an observed events, a positive visit/missing visit/positive visit is not an event). An individual has an event if she has an HPV16 or HPV18 event.
+
+```{r, include=TRUE, echo=TRUE}
+event2dose <- eventCount(trial2dose$dMat16,trial2dose$dMat18,
+                         trial2dose$sMat,trial2dose$ATPx)
+event1dose <- eventCount(trial1dose$dMat16,trial1dose$dMat18,
+                         trial1dose$sMat,trial1dose$ATPx)
+event1dose$nobs
+event1dose$N
+event1dose$Nequiv
+event2dose$nobs
+event2dose$N
+event2dose$Nequiv
+```
+
+In this example, we observed nobs=`r event2dose$nobs` events in the N=`r event2dose$N` ATP individuals in the two dose group. Importantly, the equivalent sample-size is Nequiv=`r event2dose$Nequiv` (N*nobs/nest) in the two dose group. The estimated rate in the two dose group is nobs/Nequiv.
+
+
+We can then estimate difference in rates between the two arms and their confidence interval (note: D = difference, U/L = upper and lower bounds of 95% CI)
+
+```{r, include=TRUE, echo=TRUE}
+confInt(event1dose$nobs,event1dose$Nequiv,event2dose$nobs,event2dose$Nequiv,c=0.95)
+```
+
+## Simulating a trial arm and a survey arm
+
+Here, we assume the VE is a specifed value. And we simulate the results from a trial arm and a survey. A survey arm consists of similar data to a trial arm, but only for two visits. Note, for simTrialArm, I now set pdisL2, as opposed to pdisL, to be a given value. 
+
+```{r, include=TRUE, echo=TRUE}
+VE         <- 0.9
+trial1dose <- simTrialArm(ofile="/volumes/data/Projects/HPV/out/Rparams.Rdat",yr=5,nsub=5000,pdisL2=0.045*(1-VE),
+                          pdo6=0.05,pdo=0.02,pmv=0.17)
+survey     <- simSurvey(ofile="/volumes/data/Projects/HPV/out/Rparams.Rdat",  yr=5,nsub=3000,pdisL2=0.045,pmv2=0.17)
+```
+
+Note, we will combine the trial and survey results, and some covariates (e.g. sexual activity status, etc)
+
+```{r, include=TRUE, echo=TRUE}
+veDATA <- simStudy(trial1dose,survey)
+```
+
+
+## Estimating Vaccine Efficacy
+
+We can report the number of observed events in the trial and the survey, their population sizes, and the estimated VE, where the latter is described in the CCT paper. Here, c("X1","X2") are the names of the variables to be used in the propensity score calculation. 
+
+```{r, include=TRUE, echo=TRUE}
+res <- estVE(veDATA,c("X1","X2"))
+res$ntrial.obs.L2
+res$Ntrial.both
+res$nsurvey.obs.L2
+res$Nsurvey.both
+res$VE
+###The simple estimate of VE is 
+1 - (res$ntrial.obs.L2/res$Ntrial.both)/(res$nsurvey.obs.L2/res$Nsurvey.both)
+```
+
+
+## Estimating the Confidence Interval for the VE
+
+We will use a boostrapped estimate of the VE.
+
+```{r, include=TRUE, echo=TRUE}
+library(boot)
+ev <- function(veDATA,i) {veDATA.bi <- veDATA[i,]; estVE(veDATA.bi,c("X1","X2"))$VE}
+```
+
+We originally suggested that we would run the bias- and accelerated- bootstrap confidence (bca) interval. However, the value of R must be larger than the number of observations for bca. Therefore we suggest only running it once at the end.
+
+```{r, include=TRUE, echo=TRUE, eval=FALSE}
+bootRes <- boot(data=veDATA,statistic=ev,R=20000,stype="i")
+ci      <- boot.ci(bootRes,conf=0.95,type="bca")
+```
+
+The standard percentile bootstrap should be sufficient for most preliminary analyses.
+
+```{r, include=TRUE, echo=TRUE}
+bootRes2 <- boot(data=veDATA,statistic=ev,R=1000,stype="i")
+ci2      <- boot.ci(bootRes2,conf=0.95,type="perc")
+ci2
+```
+
+
