@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>ESCUDDO</title>
+
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">ESCUDDO</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(ESCUDDO)</a></code></pre></div>
+<div id="getting-started" class="section level2">
+<h2>Getting Started</h2>
+<p>We first ran a simulation to obtain the parameters (e.g. expected infection rates, infection patterns) for ESCUDDO. Some parameters are output by the function; many other parameters used for simulating trials will be saved in ofile. Since this is only run once, we suggest setting the size of the simulation-population to be npop = 5000000.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">myRes &lt;-<span class="st"> </span><span class="kw">calcParam</span>(<span class="dt">hI1     =</span> <span class="kw">rep</span>(<span class="dv">0</span>,<span class="dv">9</span>), </a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                   <span class="dt">hI2     =</span> <span class="kw">rep</span>(<span class="dv">0</span>,<span class="dv">9</span>), </a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">                   <span class="dt">npop    =</span> <span class="dv">500000</span>, </a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">                   <span class="dt">ofile   =</span> <span class="st">&quot;/volumes/data/Projects/HPV/out/Rparams.Rdat&quot;</span>)</a></code></pre></div>
+</div>
+<div id="simulating-a-trial" class="section level2">
+<h2>Simulating a Trial</h2>
+<p>We will simulate each trial arm separately. The information collected for a trial contains three matrices and a vector. All missing values should be set to -9; otherwise all values are 0 or 1.</p>
+<ol style="list-style-type: decimal">
+<li>dMat16: A matrix showing HPV 16 infection at each visit (i.e. number of rows = number of subjects, number of columns = 9 for a four year study or 11 for a five year study; 0/1 indicate no/yes infection).</li>
+<li>dMat18: A matrix showing HPV 18 infection at each visit (i.e. number of rows = number of subjects, number of columns = 9 for a four year study or 11 for a five year study; 0/1 indicate no/yes infection).</li>
+<li>sMat: A matrix showing sexual debut before each visit (i.e. number of rows = number of subjects, number of columns = 9 for a four year study or 11 for a five year study; 0/1 indicate if sexual activity occurred prior to visit).</li>
+<li>ATPx: A vector showing whether each individual qualifies for the ATP cohort (i.e. number of rows = number of subjects)</li>
+</ol>
+<p>Note, this simulation use the ofile generated in the above step.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">trial2dose &lt;-<span class="st"> </span><span class="kw">simTrialArm</span>(<span class="dt">ofile=</span><span class="st">&quot;/volumes/data/Projects/HPV/out/Rparams.Rdat&quot;</span>,<span class="dt">yr=</span><span class="dv">5</span>,<span class="dt">nsub=</span><span class="dv">5000</span>,<span class="dt">pdis=</span><span class="fl">0.005</span>,<span class="dt">pdo6=</span><span class="fl">0.05</span>,<span class="dt">pdo=</span><span class="fl">0.02</span>,<span class="dt">pmv=</span><span class="fl">0.17</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">trial1dose &lt;-<span class="st"> </span><span class="kw">simTrialArm</span>(<span class="dt">ofile=</span><span class="st">&quot;/volumes/data/Projects/HPV/out/Rparams.Rdat&quot;</span>,<span class="dt">yr=</span><span class="dv">5</span>,<span class="dt">nsub=</span><span class="dv">5000</span>,<span class="dt">pdis=</span><span class="fl">0.01</span>,<span class="dt">pdo6=</span><span class="fl">0.05</span>,<span class="dt">pdo=</span><span class="fl">0.02</span>,<span class="dt">pmv=</span><span class="fl">0.17</span>)</a></code></pre></div>
+</div>
+<div id="getting-trial-results" class="section level2">
+<h2>Getting Trial Results</h2>
+<p>The main trial results include the number of observed events and the expected number of events had there been no missing visits. Recall an individual has an HPV16 (HPV18) event if (i) she doesn’t have HPV16 (HPV18) at the 0- or 6- month visits (ii) she has two consecutive visits with HPV16 (HPV18) during follow-up (note: for counting an observed events, a positive visit/missing visit/positive visit is not an event). An individual has an event if she has an HPV16 or HPV18 event.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">event2dose &lt;-<span class="st"> </span><span class="kw">eventCount</span>(trial2dose<span class="op">$</span>dMat16,trial2dose<span class="op">$</span>dMat18,</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">                         trial2dose<span class="op">$</span>sMat,trial2dose<span class="op">$</span>ATPx)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">event1dose &lt;-<span class="st"> </span><span class="kw">eventCount</span>(trial1dose<span class="op">$</span>dMat16,trial1dose<span class="op">$</span>dMat18,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">                         trial1dose<span class="op">$</span>sMat,trial1dose<span class="op">$</span>ATPx)</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">event1dose<span class="op">$</span>nobs</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; [1] 35</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">event1dose<span class="op">$</span>N</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; [1] 4727</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">event1dose<span class="op">$</span>Nequiv</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; [1] 3406</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">event2dose<span class="op">$</span>nobs</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; [1] 17</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">event2dose<span class="op">$</span>N</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; [1] 4745</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">event2dose<span class="op">$</span>Nequiv</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; [1] 2821</span></a></code></pre></div>
+<p>In this example, we observed nobs=17 events in the N=4745 ATP individuals in the two dose group. Importantly, the equivalent sample-size is Nequiv=2821 (N*nobs/nest) in the two dose group. The estimated rate in the two dose group is nobs/Nequiv.</p>
+<p>We can then estimate difference in rates between the two arms and their confidence interval (note: D = difference, U/L = upper and lower bounds of 95% CI)</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">confInt</span>(event1dose<span class="op">$</span>nobs,event1dose<span class="op">$</span>Nequiv,event2dose<span class="op">$</span>nobs,event2dose<span class="op">$</span>Nequiv,<span class="dt">c=</span><span class="fl">0.95</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; $D</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; [1] 0.004249752</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; $L</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; [1] -0.0003168441</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; $U</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; [1] 0.008874951</span></a></code></pre></div>
+</div>
+<div id="simulating-a-trial-arm-and-a-survey-arm" class="section level2">
+<h2>Simulating a trial arm and a survey arm</h2>
+<p>Here, we assume the VE is a specifed value. And we simulate the results from a trial arm and a survey. A survey arm consists of similar data to a trial arm, but only for two visits. Note, for simTrialArm, I now set pdisL2, as opposed to pdisL, to be a given value.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">VE         &lt;-<span class="st"> </span><span class="fl">0.9</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">trial1dose &lt;-<span class="st"> </span><span class="kw">simTrialArm</span>(<span class="dt">ofile=</span><span class="st">&quot;/volumes/data/Projects/HPV/out/Rparams.Rdat&quot;</span>,<span class="dt">yr=</span><span class="dv">5</span>,<span class="dt">nsub=</span><span class="dv">5000</span>,<span class="dt">pdisL2=</span><span class="fl">0.045</span><span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>VE),</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">                          <span class="dt">pdo6=</span><span class="fl">0.05</span>,<span class="dt">pdo=</span><span class="fl">0.02</span>,<span class="dt">pmv=</span><span class="fl">0.17</span>)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">survey     &lt;-<span class="st"> </span><span class="kw">simSurvey</span>(<span class="dt">ofile=</span><span class="st">&quot;/volumes/data/Projects/HPV/out/Rparams.Rdat&quot;</span>,  <span class="dt">yr=</span><span class="dv">5</span>,<span class="dt">nsub=</span><span class="dv">3000</span>,<span class="dt">pdisL2=</span><span class="fl">0.045</span>,<span class="dt">pmv2=</span><span class="fl">0.17</span>)</a></code></pre></div>
+<p>Note, we will combine the trial and survey results, and some covariates (e.g. sexual activity status, etc)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">veDATA &lt;-<span class="st"> </span><span class="kw">simStudy</span>(trial1dose,survey)</a></code></pre></div>
+</div>
+<div id="estimating-vaccine-efficacy" class="section level2">
+<h2>Estimating Vaccine Efficacy</h2>
+<p>We can report the number of observed events in the trial and the survey, their population sizes, and the estimated VE, where the latter is described in the CCT paper. Here, c(“X1”,“X2”) are the names of the variables to be used in the propensity score calculation.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">res &lt;-<span class="st"> </span><span class="kw">estVE</span>(veDATA,<span class="kw">c</span>(<span class="st">&quot;X1&quot;</span>,<span class="st">&quot;X2&quot;</span>))</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt; Loading required package: tidyverse</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; ✓ ggplot2 3.3.2     ✓ purrr   0.3.4</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; ✓ tibble  3.0.4     ✓ dplyr   1.0.2</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; ✓ tidyr   1.1.2     ✓ stringr 1.4.0</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; ✓ readr   1.4.0     ✓ forcats 0.5.0</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; x dplyr::filter() masks stats::filter()</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; x dplyr::lag()    masks stats::lag()</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11">res<span class="op">$</span>ntrial.obs.L2</a>
+<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt; [1] 11</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13">res<span class="op">$</span>Ntrial.both</a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; [1] 2778</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15">res<span class="op">$</span>nsurvey.obs.L2</a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; [1] 97</span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17">res<span class="op">$</span>Nsurvey.both</a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt; [1] 2214</span></a>
+<a class="sourceLine" id="cb8-19" data-line-number="19">res<span class="op">$</span>VE</a>
+<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; [1] 0.9121339</span></a>
+<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">###The simple estimate of VE is </span></a>
+<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>(res<span class="op">$</span>ntrial.obs.L2<span class="op">/</span>res<span class="op">$</span>Ntrial.both)<span class="op">/</span>(res<span class="op">$</span>nsurvey.obs.L2<span class="op">/</span>res<span class="op">$</span>Nsurvey.both)</a>
+<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt; [1] 0.9096213</span></a></code></pre></div>
+</div>
+<div id="estimating-the-confidence-interval-for-the-ve" class="section level2">
+<h2>Estimating the Confidence Interval for the VE</h2>
+<p>We will use a boostrapped estimate of the VE.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">library</span>(boot)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">ev &lt;-<span class="st"> </span><span class="cf">function</span>(veDATA,i) {veDATA.bi &lt;-<span class="st"> </span>veDATA[i,]; <span class="kw">estVE</span>(veDATA.bi,<span class="kw">c</span>(<span class="st">&quot;X1&quot;</span>,<span class="st">&quot;X2&quot;</span>))<span class="op">$</span>VE}</a></code></pre></div>
+<p>We originally suggested that we would run the bias- and accelerated- bootstrap confidence (bca) interval. However, the value of R must be larger than the number of observations for bca. Therefore we suggest only running it once at the end.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">bootRes &lt;-<span class="st"> </span><span class="kw">boot</span>(<span class="dt">data=</span>veDATA,<span class="dt">statistic=</span>ev,<span class="dt">R=</span><span class="dv">20000</span>,<span class="dt">stype=</span><span class="st">&quot;i&quot;</span>)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">ci      &lt;-<span class="st"> </span><span class="kw">boot.ci</span>(bootRes,<span class="dt">conf=</span><span class="fl">0.95</span>,<span class="dt">type=</span><span class="st">&quot;bca&quot;</span>)</a></code></pre></div>
+<p>The standard percentile bootstrap should be sufficient for most preliminary analyses.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">bootRes2 &lt;-<span class="st"> </span><span class="kw">boot</span>(<span class="dt">data=</span>veDATA,<span class="dt">statistic=</span>ev,<span class="dt">R=</span><span class="dv">1000</span>,<span class="dt">stype=</span><span class="st">&quot;i&quot;</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">ci2      &lt;-<span class="st"> </span><span class="kw">boot.ci</span>(bootRes2,<span class="dt">conf=</span><span class="fl">0.95</span>,<span class="dt">type=</span><span class="st">&quot;perc&quot;</span>)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">ci2</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; Based on 1000 bootstrap replicates</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; CALL : </span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; boot.ci(boot.out = bootRes2, conf = 0.95, type = &quot;perc&quot;)</span></a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt; Intervals : </span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt; Level     Percentile     </span></a>
+<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt; 95%   ( 0.8593,  0.9586 )  </span></a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt; Calculations and Intervals on Original Scale</span></a></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
